@@ -1,6 +1,49 @@
 # Tapp Implementation Log
 
-## 2026-10-05
+## 2026-10-05 — PWA Transition
+
+### Request
+Convert Tapp into a responsive, installable, offline-capable PWA for Windows and Android, removing all simulated macOS desktop elements.
+
+### Analysis
+- Removed legacy simulated macOS desktop components (`MacDock`, `MacMenuBar`, simulated desktop background/folders, draggable fake windows, and window beads).
+- Configured Vite PWA plugin to generate standard Service Workers, runtime caching, and Web App Manifests.
+- Tailored UI to scale responsively across Windows, Android phones, and tablets.
+
+### Implementation
+- **PWA Tooling (`tsconfig.json`, `vite.config.ts`, `index.html`)**: Integrated `vite-plugin-pwa`, registered Service Worker module types, enabled mobile capabilities, customized theme colors (`#0f0f12`), and defined `standalone` mode in the manifest.
+- **PWA Assets (`/public/`)**: Created high-quality scalable vector icon (`icon.svg`) and binary fallback PNG configurations for Android squircle cropping and iOS touch highlights.
+- **Responsive Shell (`src/App.tsx`, `src/hooks/usePWAInstall.ts`, `src/components/PWAInstallButton.tsx`)**: Created unified, calm application layout. Integrated offline status detectors, in-app installation buttons, custom slide-out preferences, and streamlined presets.
+
+### Security
+- Maintained client-only local storage with zero-secrets configurations. No API/authentication.
+
+### Files Changed
+- `/vite.config.ts`
+- `/tsconfig.json`
+- `/index.html`
+- `/src/types/timer.ts`
+- `/src/hooks/useTimer.ts`
+- `/src/hooks/usePWAInstall.ts`
+- `/src/components/PWAInstallButton.tsx`
+- `/src/hooks/useOnlineStatus.ts`
+- `/src/components/OfflineIndicator.tsx`
+- `/src/App.tsx`
+- `/public/icon.svg`
+- `/implementation-log.md`
+- `/src/components/MacDock.tsx` (Deleted)
+- `/src/components/MacMenuBar.tsx` (Deleted)
+- `/src/components/TappWindow.tsx` (Deleted)
+
+### Verification
+- Tested compilation and type coverage (exited code 0).
+- Validated offline service worker registration.
+- Confirmed responsiveness on mobile, tablet, and desktop viewport matrices.
+
+### Result
+Completed
+
+## 2026-10-05 (Legacy Phase)
 
 ### Request
 Establish Phase 01: Foundation & Architecture of Tapp — a minimal visual Pomodoro desktop application based on a modern macOS visual design direction.

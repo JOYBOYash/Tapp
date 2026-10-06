@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Dark tactile gradient background -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
+      <stop offset="0%" stop-color="#1e1e24" />
+      <stop offset="100%" stop-color="#0f0f12" />
+    </radialGradient>
+    
+    <!-- Dynamic glowing core blue gradient -->
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a84ff" />
+      <stop offset="100%" stop-color="#3399ff" />
+    </linearGradient>
+
+    <!-- Subtle border highlight -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.02" />
+    </linearGradient>
+  </defs>
+
+  <!-- Solid rounded background mimicking squircle PWA shape -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+  <rect x="2" y="2" width="508" height="508" rx="110" fill="none" stroke="url(#borderGrad)" stroke-width="4" />
+
+  <!-- Outer ambient physical ring tracker -->
+  <circle cx="256" cy="256" r="160" fill="none" stroke="#2a2a32" stroke-width="8" opacity="0.6" />
+  
+  <!-- Colored focus session segment (Active timer representation) -->
+  <path d="M 256,96 A 160,160 0 0,1 394.56,336 L 256,256 Z" fill="url(#glowGrad)" opacity="0.15" />
+  <circle cx="256" cy="256" r="160" fill="none" stroke="url(#glowGrad)" stroke-width="8" stroke-dasharray="1005" stroke-dashoffset="300" stroke-linecap="round" />
+
+  <!-- Minimal Tick Indicators -->
+  <line x1="256" y1="106" x2="256" y2="120" stroke="#f5f5f7" stroke-width="6" stroke-linecap="round" />
+  <line x1="406" y1="256" x2="392" y2="256" stroke="#8e8e93" stroke-width="4" stroke-linecap="round" />
+  <line x1="256" y1="406" x2="256" y2="392" stroke="#8e8e93" stroke-width="4" stroke-linecap="round" />
+  <line x1="106" y1="256" x2="120" y2="256" stroke="#8e8e93" stroke-width="4" stroke-linecap="round" />
+
+  <!-- The beautiful physical central node -->
+  <circle cx="256" cy="256" r="32" fill="url(#bgGrad)" stroke="url(#glowGrad)" stroke-width="6" />
+  <circle cx="256" cy="256" r="8" fill="#f5f5f7" />
+</svg>

@@ -17,14 +17,10 @@ const INITIAL_TIMER_STATE: TimerState = {
 
 const INITIAL_CONFIG: TappConfig = {
   theme: 'system',
-  windowSize: 'standard',
-  windowPosition: 'top-right',
-  alwaysOnTop: true,
-  frameless: false,
-  translucency: 0.85,
   soundEnabled: true,
   hapticEnabled: true,
-  startupEnabled: false,
+  defaultDuration: 25,
+  selectedVisual: 'ring',
 };
 
 export function useTimer() {
@@ -34,9 +30,8 @@ export function useTimer() {
       const saved = localStorage.getItem('tapp_timer_state');
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Clean dynamic states to be safe on load (if loaded running, pause it or clean it)
+        // Clean dynamic states to be safe on load
         if (parsed.status === 'running') {
-          // If it was running, convert it to paused at the time of reloading to prevent leaps
           return {
             ...parsed,
             status: 'paused',
@@ -63,7 +58,7 @@ export function useTimer() {
     return INITIAL_CONFIG;
   });
 
-  // Keep a ref of state to avoid stale closure issues in intervals
+  // Keep a ref of state to avoid stale closures
   const stateRef = useRef(state);
   stateRef.current = state;
 
@@ -237,7 +232,6 @@ export function useTimer() {
   const stopTimer = useCallback(() => {
     playClickSound();
     setState(prev => {
-      // Record stopped session to history if some progress was made
       const elapsed = prev.status === 'running' && prev.startedAt 
         ? (Date.now() - prev.startedAt) + prev.elapsedBeforePause 
         : prev.elapsedBeforePause;
@@ -285,7 +279,8 @@ export function useTimer() {
       pausedAt: null,
       elapsedBeforePause: 0,
     }));
-  }, [playClickSound]);
+    updateConfig({ defaultDuration: mins });
+  }, [playClickSound, updateConfig]);
 
   const setVisualPreset = useCallback((preset: VisualPreset) => {
     playClickSound();
@@ -293,7 +288,8 @@ export function useTimer() {
       ...prev,
       selectedVisual: preset,
     }));
-  }, [playClickSound]);
+    updateConfig({ selectedVisual: preset });
+  }, [playClickSound, updateConfig]);
 
   const clearHistory = useCallback(() => {
     playClickSound();
@@ -304,12 +300,11 @@ export function useTimer() {
     }));
   }, [playClickSound]);
 
-  const updateConfig = useCallback((updates: Partial<TappConfig>) => {
+  function updateConfig(updates: Partial<TappConfig>) {
     playClickSound();
     setConfig(prev => ({ ...prev, ...updates }));
-  }, [playClickSound]);
+  }
 
-  // Simple custom sound simulator for physical timer click tick
   const playTickSound = useCallback(() => {
     if (!config.soundEnabled) return;
     try {

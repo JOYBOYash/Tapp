@@ -1,5 +1,5 @@
 /**
- * Tapp Timer Data Models and TypeScript Definitions
+ * Tapp PWA Timer Data Models and TypeScript Definitions
  */
 
 export type TimerStatus = 'idle' | 'running' | 'paused' | 'completed' | 'stopped';
@@ -28,12 +28,8 @@ export interface TimerHistoryEntry {
 
 export interface TappConfig {
   theme: 'system' | 'light' | 'dark';
-  windowSize: 'mini' | 'compact' | 'standard' | 'wide';
-  windowPosition: { x: number; y: number } | string; // Preset or custom coordinates
-  alwaysOnTop: boolean;
-  frameless: boolean;
-  translucency: number; // 0 (opaque) to 1 (max transparent backdrop blur)
   soundEnabled: boolean;
   hapticEnabled: boolean;
-  startupEnabled: boolean;
+  defaultDuration: number; // in minutes
+  selectedVisual: VisualPreset;
 }
