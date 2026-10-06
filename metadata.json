@@ -1,0 +1,6 @@
+{
+  "name": "Tapp",
+  "description": "A minimal visual Pomodoro desktop application where time is visible, ambient, and physical.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
