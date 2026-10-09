@@ -57,7 +57,8 @@
 body {
   font-family: var(--font-sans);
   background-color: #0c0c0e;
-  overflow: hidden;
+  min-height: 100%;
+  overflow-x: hidden;
   letter-spacing: -0.011em;
 }
 
@@ -161,3 +162,12 @@ body {
     transform: none !important;
   }
 }
+
+
+/* Subtle, accessible progress feedback for genuine asynchronous work. */
+.tapp-spinner { animation: tapp-spin 0.8s linear infinite; }
+@keyframes tapp-spin { to { transform: rotate(360deg); } }
+.tapp-progress-track { width: 100%; height: 3px; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,0.09); }
+.tapp-progress-indeterminate { width: 38%; height: 100%; border-radius: inherit; background: #3b82f6; animation: tapp-progress-slide 1.15s ease-in-out infinite; }
+@keyframes tapp-progress-slide { from { transform: translateX(-110%); } to { transform: translateX(280%); } }
+@media (prefers-reduced-motion: reduce) { .tapp-spinner, .tapp-progress-indeterminate { animation: none; } }
