@@ -89,20 +89,22 @@ export default function App() {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const progressRatio = Math.min(1, Math.max(0, (state.duration - remaining) / state.duration));
-  const percentProgress = progressRatio * 100;
+  const progressRatio = state.duration > 0
+    ? Math.min(1, Math.max(0, (state.duration - remaining) / state.duration))
+    : 0;
 
   return (
     <div className="min-h-screen w-full bg-[#0f0f12] text-slate-100 flex flex-col items-center justify-between p-4 md:p-8 select-none font-sans overflow-x-hidden safe-area-padding">
       
-      {/* Background Calm Ambient Gradients */}
-      <div className="absolute inset-0 z-0 bg-[#0c0c0f] pointer-events-none">
-        <div className="absolute inset-0 opacity-15 mix-blend-color-dodge filter blur-[100px] scale-110">
-          <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vh] bg-blue-600 rounded-full animate-pulse transition-all duration-[8000ms]" />
-          <div className="absolute bottom-1/3 right-1/4 w-[35vw] h-[35vh] bg-indigo-500 rounded-full transition-all duration-[6000ms]" />
-        </div>
-        <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px]" />
-      </div>
+      {/* Stable ambient background: no blend modes, giant filters, or animated blobs. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-[#0c0c0f]"
+        style={{
+          backgroundImage:
+            'radial-gradient(ellipse at 22% 24%, rgba(37, 99, 235, 0.13) 0%, transparent 42%), radial-gradient(ellipse at 82% 72%, rgba(79, 70, 229, 0.10) 0%, transparent 38%)',
+        }}
+      />
 
       {/* Main Core View Area */}
       <div className="relative z-10 w-full max-w-sm flex-1 flex flex-col justify-between py-6">
@@ -118,7 +120,9 @@ export default function App() {
           
           <button
             onClick={() => { playClickSound(); setShowSettings(true); }}
-            className="p-2 rounded-full hover:bg-white/5 active:scale-95 transition-all cursor-pointer text-slate-400 hover:text-white"
+            aria-label="Open settings"
+            aria-haspopup="dialog"
+            className="min-h-11 min-w-11 p-2 rounded-full hover:bg-white/5 active:scale-95 transition-all cursor-pointer text-slate-400 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
             title="Open Preferences"
           >
             <Settings size={18} />
@@ -130,8 +134,8 @@ export default function App() {
           {state.status === 'completed' ? (
             /* COMPLETION VIEW */
             <div className="flex flex-col items-center justify-center text-center space-y-5 animate-fade-in py-6">
-              <div className="w-18 h-18 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 relative animate-bounce">
-                <Sparkles size={24} className="absolute -top-1 -right-1 text-yellow-400 animate-pulse" />
+              <div className="w-[4.5rem] h-[4.5rem] rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 relative">
+                <Sparkles size={24} className="absolute -top-1 -right-1 text-yellow-400" />
                 <Check size={32} />
               </div>
               <div className="space-y-1">
@@ -199,16 +203,17 @@ export default function App() {
                     <div 
                       style={{
                         opacity: state.status === 'running' ? 0.35 + (1 - progressRatio) * 0.45 : 0.2,
-                        transform: `scale(${1.0 + (1 - progressRatio) * 0.2})`
+                        transform: `scale(${1.0 + (1 - progressRatio) * 0.2})`,
+                        background: 'radial-gradient(circle, rgba(59,130,246,0.28) 0%, rgba(59,130,246,0.10) 42%, transparent 72%)'
                       }}
-                      className="absolute w-40 h-40 rounded-full bg-blue-500/50 filter blur-3xl transition-all duration-700 animate-pulse"
+                      className="absolute w-40 h-40 rounded-full transition-opacity duration-500"
                     />
                     <div className="relative w-36 h-36 rounded-full bg-black/10 dark:bg-white/2 border border-white/10 flex flex-col items-center justify-center z-10 shadow-inner">
                       <span className="text-3xl font-bold tracking-tight font-mono tabular-nums text-white">
                         {formatTime(remaining)}
                       </span>
                       {state.status === 'running' && (
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1 animate-ping" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1" />
                       )}
                     </div>
                   </div>
@@ -227,7 +232,7 @@ export default function App() {
                     {/* Trickling neck */}
                     <div className="w-4 h-2 flex justify-center items-center relative overflow-visible z-10">
                       {state.status === 'running' && (
-                        <div className="w-0.5 h-16 bg-blue-400 absolute top-0 -bottom-12 animate-pulse shadow-md" />
+                        <div className="w-0.5 h-16 bg-blue-400/80 absolute top-0 -bottom-12 shadow-md" />
                       )}
                       <div className="w-2 h-1 bg-neutral-600 rounded-sm" />
                     </div>
@@ -238,7 +243,7 @@ export default function App() {
                         className="w-full bg-gradient-to-t from-blue-600 to-blue-500 transition-all duration-1000 origin-bottom"
                       />
                       {state.status === 'running' && (
-                        <div className="absolute bottom-0 w-3 h-3 bg-blue-300 rounded-full filter blur-sm animate-ping" />
+                        <div className="absolute bottom-0 w-2 h-2 bg-blue-300 rounded-full" />
                       )}
                     </div>
                     {/* Floating Numeric Time Badge */}
@@ -274,7 +279,7 @@ export default function App() {
                 {state.status === 'idle' || state.status === 'stopped' ? (
                   <button
                     onClick={() => startTimer(customMinutes * 60 * 1000)}
-                    className="w-full max-w-[260px] py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-600/10 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full max-w-[260px] min-h-12 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-600/10 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
                   >
                     <Play size={14} fill="currentColor" /> Start Focus Session
                   </button>
@@ -344,7 +349,8 @@ export default function App() {
                           setCustomMinutes(val);
                           setDuration(val);
                         }}
-                        className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                        aria-label="Session duration in minutes"
+                        className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-blue-500 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-400"
                       />
                     </div>
 
@@ -373,18 +379,26 @@ export default function App() {
 
       {/* SIDEBAR PREFERENCES MODAL */}
       {showSettings && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
-          <div className="w-full max-w-sm rounded-2xl bg-[#16161a] border border-white/10 p-5 shadow-2xl flex flex-col gap-4 text-left relative max-h-[85vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 animate-fade-in"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setShowSettings(false);
+          }}>
+          <div className="w-full max-w-sm rounded-2xl bg-[#16161a] border border-white/10 p-5 shadow-2xl flex flex-col gap-4 text-left relative max-h-[85dvh] overflow-y-auto overscroll-contain"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tapp-settings-title">
             
             {/* Close Settings */}
             <button
               onClick={() => { playClickSound(); setShowSettings(false); }}
+              aria-label="Close settings"
               className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-white/5 text-slate-400 hover:text-white transition cursor-pointer"
             >
               <X size={16} />
             </button>
 
-            <h3 className="text-base font-bold text-white tracking-tight">Tapp Preferences</h3>
+            <h3 id="tapp-settings-title" className="text-base font-bold text-white tracking-tight">Tapp Preferences</h3>
 
             {/* PWA Direct Installation Banner */}
             <div className="py-1">
