@@ -1,10 +1,26 @@
 import React, { useState } from 'react';
 import { usePWAInstall } from '../hooks/usePWAInstall';
-import { Download, X } from 'lucide-react';
+import { Download, X, LoaderCircle, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function PWAInstallButton() {
   const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
   const [showIOSGuide, setShowIOSGuide] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
+  const [installMessage, setInstallMessage] = useState<string | null>(null);
+
+  const handleInstall = async () => {
+    if (isInstalling) return;
+    setIsInstalling(true);
+    setInstallMessage(null);
+    try {
+      const accepted = await install();
+      setInstallMessage(accepted ? 'Tapp is ready to install.' : 'Installation was dismissed. You can try again.');
+    } catch {
+      setInstallMessage('Could not open the install prompt. Please use your browser menu to install Tapp.');
+    } finally {
+      setIsInstalling(false);
+    }
+  };
 
   // If already running as installed standalone PWA, hide the button
   if (isInstalled) {
@@ -14,13 +30,24 @@ export default function PWAInstallButton() {
   // Chromium / Android / Desktop flow
   if (isInstallable) {
     return (
-      <button
-        onClick={install}
-        className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 py-2 px-4 text-xs font-semibold text-white shadow-md transition-colors cursor-pointer"
-      >
-        <Download size={13} />
-        Install Tapp Utility
-      </button>
+      <div className="space-y-2">
+        <button
+          type="button"
+          onClick={handleInstall}
+          disabled={isInstalling}
+          aria-busy={isInstalling}
+          className="w-full min-h-11 flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-75 disabled:cursor-wait py-2 px-4 text-xs font-semibold text-white shadow-md transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+        >
+          {isInstalling ? <LoaderCircle size={14} className="animate-spin" aria-hidden="true" /> : <Download size={13} aria-hidden="true" />}
+          <span>{isInstalling ? 'Opening install prompt…' : 'Install Tapp Utility'}</span>
+        </button>
+        {installMessage && (
+          <p role="status" className="flex items-start gap-1.5 text-[11px] leading-relaxed text-slate-400">
+            {installMessage.startsWith('Could not') ? <AlertCircle size={13} className="mt-0.5 shrink-0" /> : installMessage.startsWith('Tapp') ? <CheckCircle2 size={13} className="mt-0.5 shrink-0 text-emerald-400" /> : null}
+            <span>{installMessage}</span>
+          </p>
+        )}
+      </div>
     );
   }
 
