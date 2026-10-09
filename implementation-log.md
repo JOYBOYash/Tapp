@@ -1,3 +1,25 @@
+## 2026-10-10 — Visual Stability, UX Feedback, and Loading States
+
+### Request
+Remove visible black/dirty ambient blobs, improve interaction clarity, and show loading feedback when an asynchronous process is actually in progress.
+
+### Changes
+- Replaced the giant blurred, animated color-dodge background with two static radial gradients to avoid unstable compositing artifacts.
+- Removed unnecessary pulse/ping/filter effects from timer visuals to reduce visual noise and compositor work.
+- Improved settings dialog semantics, dismissal behavior, keyboard focus visibility, and touch target sizing.
+- Added an accessible install-button loading state, duplicate-click protection, and dismissal/error feedback for the asynchronous PWA install prompt.
+- Removed the external Google Fonts stylesheet as a render-time dependency so the app can fall back immediately to system fonts when offline.
+- Added reusable CSS progress-indicator primitives for future genuinely asynchronous operations. They should only appear while an operation is pending; do not fake loading for synchronous timer actions.
+
+### Verification
+- Changes are committed to a dedicated branch.
+- Build/lint and browser/device visual verification have not been run from this editing session. Run `npm run lint` and `npm run build`, then verify the app on desktop and Android/PWA, especially background edges and install flow.
+
+### Follow-up checks
+- Confirm installed PWA icons are valid PNG files.
+- Test install accepted, dismissed, and thrown-error paths.
+- Verify the background uses no filters/blend modes and reduced-motion preferences are respected.
+
 # Tapp Implementation Log
 
 ## 2026-10-05 — PWA Transition
